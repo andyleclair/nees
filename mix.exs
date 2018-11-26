@@ -24,6 +24,7 @@ defmodule Nees.MixProject do
   defp deps do
     [
       {:circuits_uart, "~> 1.5"},
+      {:dialyxir, "~> 1.0.0-rc.4", only: [:dev], runtime: false}
     ]
   end
 end
