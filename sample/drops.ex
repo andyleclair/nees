@@ -1,11 +1,11 @@
-defmodule Ness.Sample.Drops do
+defmodule Nees.Sample.Drops do
   @moduledoc ~S"""
   Shows off selecting pens while drawing.
 
   Assumes two different colors in carousel 5 and 6
   """
 
-  use Ness
+  use Nees
 
   def main() do
     initial_radius = 50
@@ -29,7 +29,7 @@ defmodule Ness.Sample.Drops do
   end
 
   def select_random_pen() do
-    Enum.random([5, 6]) |> Ness.Pen.pen() |> Plotter.write()
+    Enum.random([5, 6]) |> Nees.Pen.pen() |> Plotter.write()
   end
 
   def out_of_bounds(radius) do

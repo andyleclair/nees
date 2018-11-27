@@ -19,7 +19,6 @@ defmodule Nees.Plotter do
   @impl true
   def init(_) do
     {:ok, pid} = UART.start_link()
-    UART.open(pid, @device, speed: @speed, active: true)
 
     case UART.open(pid, @device, speed: @speed, active: true) do
       :ok ->

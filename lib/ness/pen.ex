@@ -1,4 +1,4 @@
-defmodule Ness.Pen do
+defmodule Nees.Pen do
   @moduledoc ~S"""
   Selects a pen from the carousel
   """

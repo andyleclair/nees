@@ -1,8 +1,8 @@
-defmodule Ness.Shapes.Rect do
+defmodule Nees.Shapes.Rect do
   defstruct [:width, :height]
 end
 
-defimpl Ness.Shape, for: Ness.Shapes.Rect do
+defimpl Nees.Shape, for: Nees.Shapes.Rect do
   def draw(rect) do
     ""
   end

@@ -1,4 +1,4 @@
-defmodule NessTest do
+defmodule NeesTest do
   use ExUnit.Case
-  doctest Ness
+  doctest Nees
 end

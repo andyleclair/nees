@@ -1,8 +1,8 @@
-defmodule Ness.Shapes.Circle do
+defmodule Nees.Shapes.Circle do
   defstruct [:center, :radius]
 end
 
-defimpl Ness.Shape, for: Ness.Shapes.Circle do
+defimpl Nees.Shape, for: Nees.Shapes.Circle do
   def draw(circle) do
     "PU#{circle.center};CI#{circle.radius};PU;"
   end
