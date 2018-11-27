@@ -14,6 +14,6 @@ defmodule Nees.Drawing do
 
   @spec label(Point, String.t()) :: Command.t()
   def label(start, text) do
-    "DT$,1;PU#{start};LB#{text}$;PU;"
+    "PU#{start};LB#{text}#{<<3>>};PU;"
   end
 end
