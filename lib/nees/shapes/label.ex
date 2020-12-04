@@ -13,7 +13,7 @@ defmodule Nees.Shapes.Label do
   defimpl Nees.Shape do
     def draw(text) do
       [
-        "PU;PA#{text.position}",
+        "PU#{text.position}",
         "SI#{text.size[:width]},#{text.size[:height]}",
         "LB#{text.text}#{<<3>>}",
         "PU"
