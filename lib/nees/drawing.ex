@@ -1,18 +1,15 @@
 defmodule Nees.Drawing do
-  alias Nees.Point
-  alias Nees.Command
-
-  @spec line(Point, Point) :: Command.t()
+  @spec line(%Nees.Point{}, %Nees.Point{}) :: Nees.Command.t()
   def line(from, to) do
     "PU#{from};PD;PA#{to};PU;"
   end
 
-  @spec circle(Point, Number) :: Command.t()
+  @spec circle(%Nees.Point{}, number()) :: Nees.Command.t()
   def circle(center, radius) do
     "PU#{center};CI#{radius};PU;"
   end
 
-  @spec label(Point, String.t()) :: Command.t()
+  @spec label(%Nees.Point{}, String.t()) :: Nees.Command.t()
   def label(start, text) do
     "PU#{start};LB#{text}#{<<3>>};PU;"
   end

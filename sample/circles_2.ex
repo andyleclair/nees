@@ -14,7 +14,7 @@ defmodule Nees.Sample.Circles2 do
   end
 
   def draw_circles(point) do
-    case Paper.in_bounds(point) do
+    case Paper.in_bounds?(point) do
       false ->
         :ok
 

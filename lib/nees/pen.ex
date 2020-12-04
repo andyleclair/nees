@@ -3,7 +3,7 @@ defmodule Nees.Pen do
   Selects a pen from the carousel
   """
 
-  @spec pen(Integer) :: Command.t()
+  @spec pen(Integer) :: Nees.Command.t()
   def pen(index) when index <= 6 do
     "SP#{index};"
   end

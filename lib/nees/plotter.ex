@@ -11,7 +11,7 @@ defmodule Nees.Plotter do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
-  @spec write(Nees.command()) :: :ok
+  @spec write(Nees.Command.t()) :: :ok
   def write(code) do
     GenServer.call(__MODULE__, {:write, code}, :infinity)
   end
