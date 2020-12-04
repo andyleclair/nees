@@ -3,6 +3,7 @@ defmodule Nees.Plotter do
 
   use GenServer
   alias Circuits.UART
+  alias Nees.{Command, Shape}
 
   @device Application.compile_env(:nees, :device, "ttyUSB0")
   @speed Application.compile_env(:nees, :speed, 9600)
@@ -11,7 +12,11 @@ defmodule Nees.Plotter do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
-  @spec write(Nees.Command.t()) :: :ok
+  @spec write(Command.t() | Shape.t()) :: :ok
+  def write(shape) when is_struct(shape) do
+    shape |> Shape.draw() |> write()
+  end
+
   def write(code) do
     GenServer.call(__MODULE__, {:write, code}, :infinity)
   end

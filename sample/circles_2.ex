@@ -5,6 +5,7 @@ defmodule Nees.Sample.Circles2 do
   """
 
   use Nees
+  alias Nees.Shapes.Circle
   @step 200
   @radius 500
 
@@ -19,7 +20,7 @@ defmodule Nees.Sample.Circles2 do
         :ok
 
       true ->
-        circle(point, @radius) |> Plotter.write()
+        %Circle{center: point, radius: @radius} |> Plotter.write()
         next_y = point.y + @step * :math.sin(point.x + @step)
         draw_circles(%Point{x: point.x + @step, y: next_y})
     end
