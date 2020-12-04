@@ -3,7 +3,7 @@
 import Config
 
 config :nees,
-  device: "ttyUSB0",
+  device: "/dev/cu.usbserial-PX2RJ8WX",
   speed: 9600
 
 # This configuration is loaded before any dependency and is restricted

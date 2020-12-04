@@ -29,7 +29,7 @@ defmodule Nees.Sample.Drops do
   end
 
   def select_random_pen() do
-    Enum.random([5, 6]) |> Nees.Pen.pen() |> Plotter.write()
+    Enum.random([4, 5, 6]) |> Nees.Pen.pen() |> Plotter.write()
   end
 
   def out_of_bounds(radius) do
