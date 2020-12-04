@@ -6,6 +6,7 @@ defmodule Nees.Sample.Drops do
   """
 
   use Nees
+  alias Nees.Shapes.Circle
 
   def main() do
     initial_radius = 50
@@ -18,9 +19,7 @@ defmodule Nees.Sample.Drops do
     else
       select_random_pen()
 
-      Paper.center()
-      |> circle(radius)
-      |> Plotter.write()
+      %Circle{center: Paper.center(), radius: radius} |> Plotter.write()
 
       new_radius = radius + :rand.uniform(100) + 20
 

@@ -4,6 +4,7 @@ defmodule Nees.Sample.Circles do
   """
 
   use Nees
+  alias Nees.Shapes.Circle
   @step 200
   @radius 500
 
@@ -14,7 +15,7 @@ defmodule Nees.Sample.Circles do
 
   def draw_circles(point) do
     if Paper.in_bounds?(point) do
-      circle(point, @radius) |> Plotter.write()
+      %Circle{center: point, radius: @radius} |> Plotter.write()
       draw_circles(%Point{x: point.x + @step, y: point.y})
     else
       :ok
