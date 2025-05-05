@@ -16,7 +16,6 @@ iex> Nerves.UART.open(pid, "ttyUSB0", speed: 9600, active: true)
 ```
 
 If that returns `{:error, :eacces}` then you need to be in `dialout` (also log out and back in)
-I
 
 ## Installation
 

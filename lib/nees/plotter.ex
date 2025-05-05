@@ -2,10 +2,10 @@ defmodule Nees.Plotter do
   require Logger
 
   use GenServer
-  alias Nerves.UART
+  alias Circuits.UART
 
-  @device Application.get_env(:nees, :device, "ttyUSB0")
-  @speed Application.get_env(:nees, :speed, 9600)
+  @device Application.compile_env(:nees, :device, "ttyUSB0")
+  @speed Application.compile_env(:nees, :speed, 9600)
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
