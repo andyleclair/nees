@@ -61,6 +61,10 @@ defmodule Nees.Plotter do
   end
 
   # TODO: handle pushback message when we fill the plotter's buffer
+  def handle_info({:circuits_uart, ^@device, code}, state) do
+    Logger.debug("Got unhandled code from plotter: #{code}")
+    {:noreply, state}
+  end
 
   def write_buffer() do
     Process.send_after(self(), :flush_line, 250)
