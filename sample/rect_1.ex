@@ -1,28 +1,28 @@
-defmodule Nees.Sample.Circles2 do
+defmodule Nees.Sample.Rect1 do
   @moduledoc ~S"""
-  Draws a line of circles, but on a sine wave!
+  Draws a line of rectangles, but on a sine wave!
   Much more interesting.
   """
 
   use Nees
-  alias Nees.Shapes.Circle
+  alias Nees.Shapes.Square
   @step 200
-  @radius 500
+  @size 500
 
   def main() do
     start = %Point{x: 0, y: Paper.ymax() / 2}
-    draw_circles(start)
+    draw_squares(start)
   end
 
-  def draw_circles(point) do
+  def draw_squares(point) do
     case Paper.in_bounds?(point) do
       false ->
         :ok
 
       true ->
-        %Circle{center: point, radius: @radius} |> Plotter.write()
+        %Square{origin: point, size: @size} |> Plotter.write()
         next_y = point.y + @step * :math.sin(point.x + @step)
-        draw_circles(%Point{x: point.x + @step, y: next_y})
+        draw_squares(%Point{x: point.x + @step, y: next_y})
     end
   end
 end

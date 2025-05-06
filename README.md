@@ -2,6 +2,10 @@
 
 A library for interfacing with a HP 7475a pen plotter
 
+## Usage
+
+See the `sample` dir for usage examples
+
 ## Notes
 
 On Linux you may need to add yourself to the `dialout` group to access devices

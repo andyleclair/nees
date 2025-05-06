@@ -1,5 +1,6 @@
 defmodule Nees.Sample.Lines do
   use Nees
+  alias Nees.Shapes.Circle
 
   def main() do
     start = Paper.center()
@@ -7,14 +8,14 @@ defmodule Nees.Sample.Lines do
   end
 
   def draw_lines(start) do
-    circle(start, 50) |> Plotter.write()
+    %Circle{center: start, radius: 50} |> Plotter.write()
     draw_lines(start, next(), 1)
   end
 
   def draw_lines(_start, _end_pt, 50), do: :ok
 
   def draw_lines(start, end_pt, num) do
-    circle(start, 50) |> Plotter.write()
+    %Circle{center: start, radius: 50} |> Plotter.write()
     line(start, end_pt) |> Plotter.write()
     draw_lines(end_pt, next(), num + 1)
   end

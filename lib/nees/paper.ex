@@ -9,8 +9,8 @@ defmodule Nees.Paper do
     %Point{x: xmax() / 2, y: ymax() / 2}
   end
 
-  @spec in_bounds(Point) :: boolean
-  def in_bounds(point) do
+  @spec in_bounds?(%Point{}) :: boolean
+  def in_bounds?(point) do
     point.x <= xmax() && point.y <= ymax()
   end
 end

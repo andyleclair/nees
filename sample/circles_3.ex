@@ -4,6 +4,7 @@ defmodule Nees.Sample.Circles3 do
   """
 
   use Nees
+  alias Nees.Shapes.Circle
 
   def main() do
     initial_size = 50
@@ -14,9 +15,7 @@ defmodule Nees.Sample.Circles3 do
     if size >= Paper.xmax() || size >= Paper.ymax() do
       :ok
     else
-      Paper.center()
-      |> circle(size)
-      |> Plotter.write()
+      %Circle{center: Paper.center(), radius: size} |> Plotter.write()
 
       new_size = size + :rand.uniform(100) + 50
 
