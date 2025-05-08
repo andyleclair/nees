@@ -4,6 +4,11 @@ defmodule Nees.HPGL do
   This module provides functions to generate HPGL commands in the 7475a flavor
   """
 
+  @doc """
+  Initialize the plotter to default settings. This is the first command that should be sent to the plotter.
+
+  When you boot the `Nees.Plotter` process, this will happen automatically.
+  """
   def initialize() do
     "IN;\r\n"
   end
@@ -27,8 +32,27 @@ defmodule Nees.HPGL do
     "PU;\r\n"
   end
 
+  def pen_up({x, y}) do
+    "PU#{x},#{y};\r\n"
+  end
+
   def pen_down() do
     "PD;\r\n"
+  end
+
+  def pen_down({x, y}) do
+    "PD#{x},#{y};\r\n"
+  end
+
+  def pen_down(points) when is_list(points) do
+    Enum.reduce(points, nil, fn {x, y}, acc ->
+      if is_nil(acc) do
+        "PD#{x},#{y}"
+      else
+        acc <> "#{x},#{y}"
+      end
+
+    end) <> ";\r\n"
   end
 
   def move(x, y) do

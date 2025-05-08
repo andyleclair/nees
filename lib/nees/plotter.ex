@@ -6,6 +6,7 @@ defmodule Nees.Plotter do
 
   use GenServer
   alias Circuits.UART
+  alias Nees.HPGL
 
   @device Application.compile_env(:nees, :device, "ttyUSB0")
   @speed Application.compile_env(:nees, :speed, 9600)
@@ -14,18 +15,18 @@ defmodule Nees.Plotter do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
-  @spec write(Nees.command()) :: :ok
   def write(code) do
-    GenServer.call(__MODULE__, {:write, code}, :infinity)
+    GenServer.call(__MODULE__, {:write, code})
   end
 
+  # TODO: allow for plotting to be started and stopped
   @impl true
   def init(_) do
     {:ok, pid} = UART.start_link()
 
     case UART.open(pid, @device, speed: @speed, active: true) do
       :ok ->
-        :ok = UART.write(pid, "IN;SP1;\r\n")
+        :ok = UART.write(pid, HPGL.initialize())
         write_buffer()
         {:ok, %{plotter: pid, buffer: []}}
 
@@ -37,17 +38,7 @@ defmodule Nees.Plotter do
 
   @impl true
   def handle_call({:write, code}, _from, %{buffer: buf} = state) do
-    # it is important to end the code with \r\n, otherwise the plotter will not process it
-    ended_code =
-      if String.ends_with?(code, "\r\n") do
-        code
-      else
-        code <> "\r\n"
-      end
-
-    new_buffer = buf ++ [ended_code]
-
-    {:reply, :ok, %{state | buffer: new_buffer}}
+    {:reply, :ok, %{state | buffer: buf ++ [code]}}
   end
 
   @impl true

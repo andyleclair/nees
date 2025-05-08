@@ -8,7 +8,6 @@ defmodule Nees do
   defmacro __using__(_opts) do
     quote do
       import Nees.Drawing
-      alias Nees.Point
       alias Nees.Plotter
       alias Nees.Paper
     end
