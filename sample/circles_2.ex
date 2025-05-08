@@ -8,20 +8,17 @@ defmodule Nees.Sample.Circles2 do
   @step 200
   @radius 500
 
-  def main() do
-    start = %Point{x: 0, y: Paper.ymax() / 2}
-    draw_circles(start)
+  def draw!() do
+    draw_circles({0, Paper.ymax() / 2})
   end
 
-  def draw_circles(point) do
-    case Paper.in_bounds(point) do
-      false ->
-        :ok
-
-      true ->
-        circle(point, @radius) |> Plotter.write()
-        next_y = point.y + @step * :math.sin(point.x + @step)
-        draw_circles(%Point{x: point.x + @step, y: next_y})
+  def draw_circles({x, y} = point) do
+    if Paper.in_bounds?(point) do
+      circle(point, @radius) |> Plotter.write()
+      next_y = y + @step * :math.sin(x + @step)
+      draw_circles({x + @step, y: next_y})
+    else
+      :ok
     end
   end
 end

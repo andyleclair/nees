@@ -20,6 +20,6 @@ defmodule Nees.Sample.Lines do
   end
 
   def next() do
-    %Point{x: :rand.uniform(Paper.xmax()), y: :rand.uniform(Paper.ymax())}
+    {:rand.uniform(Paper.xmax()), :rand.uniform(Paper.ymax())}
   end
 end

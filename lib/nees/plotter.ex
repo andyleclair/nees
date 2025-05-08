@@ -1,4 +1,7 @@
 defmodule Nees.Plotter do
+  @moduledoc """
+  GenServer process to handle the connection to the plotter
+  """
   require Logger
 
   use GenServer
@@ -34,6 +37,7 @@ defmodule Nees.Plotter do
 
   @impl true
   def handle_call({:write, code}, _from, %{buffer: buf} = state) do
+    # it is important to end the code with \r\n, otherwise the plotter will not process it
     ended_code =
       if String.ends_with?(code, "\r\n") do
         code
@@ -61,8 +65,9 @@ defmodule Nees.Plotter do
   end
 
   # TODO: handle pushback message when we fill the plotter's buffer
-  def handle_info({:circuits_uart, ^@device, code}, state) do
-    Logger.debug("Got unhandled code from plotter: #{code}")
+  @impl true
+  def handle_info({:circuits_uart, _device, code}, state) do
+    Logger.debug("Got unhandled code from plotter: #{inspect(code, binaries: :as_binary)}")
     {:noreply, state}
   end
 

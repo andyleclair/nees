@@ -1,7 +1,9 @@
 defmodule Nees do
   @moduledoc """
-  Documentation for Nees.
+  Nees is a library for drawing on an HP 7475a pen plotter.
   """
+
+  @type point :: {number(), number()}
 
   defmacro __using__(_opts) do
     quote do
