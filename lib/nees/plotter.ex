@@ -26,8 +26,12 @@ defmodule Nees.Plotter do
 
     case UART.open(pid, @device, speed: @speed, active: true) do
       :ok ->
+        Logger.debug("Initializing plotter...")
+
         :ok = UART.write(pid, HPGL.initialize())
+
         write_buffer()
+
         {:ok, %{plotter: pid, buffer: []}}
 
       {:error, err} ->
@@ -37,7 +41,12 @@ defmodule Nees.Plotter do
   end
 
   @impl true
-  def handle_call({:write, code}, _from, %{buffer: buf} = state) do
+  def handle_call({:write, code}, _from, %{buffer: buf} = state) when is_list(code) do
+    {:reply, :ok, %{state | buffer: buf ++ code}}
+  end
+
+  @impl true
+  def handle_call({:write, code}, _from, %{buffer: buf} = state) when is_binary(code) do
     {:reply, :ok, %{state | buffer: buf ++ [code]}}
   end
 
