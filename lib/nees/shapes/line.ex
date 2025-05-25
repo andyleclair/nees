@@ -3,7 +3,7 @@ defmodule Nees.Shapes.Line do
   A dang ol LINE
   """
   defstruct [:start, :end]
-  alias Nees.Shapes.Line
+  alias __MODULE__
 
   defimpl Nees.Shape do
     def draw(%Line{start: start, end: end_point}) do

@@ -1,9 +1,13 @@
 defmodule Nees.Plotter do
+  @moduledoc """
+  GenServer process to handle the connection to the plotter
+  """
   require Logger
 
   use GenServer
   alias Circuits.UART
   alias Nees.{Command, Shape}
+  alias Nees.HPGL
 
   @device Application.compile_env(:nees, :device, "ttyUSB0")
   @speed Application.compile_env(:nees, :speed, 9600)
@@ -17,10 +21,11 @@ defmodule Nees.Plotter do
     shape |> Shape.draw() |> write()
   end
 
-  def write(code) do
-    GenServer.call(__MODULE__, {:write, code}, :infinity)
+  def write(code) when is_binary(code) do
+    GenServer.call(__MODULE__, {:write, code})
   end
 
+  # TODO: allow for plotting to be started and stopped
   @impl true
   def init(_) do
     {:ok, pid} = UART.start_link()
@@ -28,7 +33,10 @@ defmodule Nees.Plotter do
     case UART.open(pid, @device, speed: @speed, active: true) do
       :ok ->
         :ok = UART.write(pid, prepare_line(Nees.Command.initialize()))
-        write_buffer()
+        Logger.debug("Initializing plotter...")
+
+        :ok = UART.write(pid, HPGL.initialize())
+
         {:ok, %{plotter: pid, buffer: []}}
 
       {:error, err} ->
@@ -38,13 +46,15 @@ defmodule Nees.Plotter do
   end
 
   @impl true
-  def handle_call({:write, code}, _from, %{buffer: buf} = state) do
-    new_buffer = buf ++ [prepare_line(code)]
-
-    {:reply, :ok, %{state | buffer: new_buffer}}
+  def handle_call({:write, code}, _from, %{buffer: buf} = state) when is_list(code) do
+    {:reply, :ok, %{state | buffer: buf ++ code}}
   end
 
-  # TODO: handle pushback message when we fill the plotter's buffer
+  @impl true
+  def handle_call({:write, code}, _from, %{buffer: buf} = state) when is_binary(code) do
+    {:reply, :ok, %{state | buffer: buf ++ [prepare_line(code)]}}
+  end
+
   @impl true
   def handle_info(:flush_line, %{buffer: buf, plotter: pid} = state) do
     write_buffer()
@@ -59,8 +69,10 @@ defmodule Nees.Plotter do
     end
   end
 
-  def handle_info({:circuits_uart, ^@device, code}, state) do
-    Logger.debug("Got unhandled code from plotter: #{code}")
+  # TODO: handle pushback message when we fill the plotter's buffer
+  @impl true
+  def handle_info({:circuits_uart, _device, code}, state) do
+    Logger.debug("Got unhandled code from plotter: #{inspect(code, binaries: :as_binary)}")
     {:noreply, state}
   end
 

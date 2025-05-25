@@ -4,7 +4,7 @@ defmodule Nees.Shapes.FilledCircle do
   """
   defstruct [:center, :radius, :fill_type]
 
-  alias Nees.Shapes.FilledCircle
+  alias __MODULE__
 
   defimpl Nees.Shape do
     @doc "Circles are drawn from the center"

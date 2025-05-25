@@ -2,8 +2,12 @@ defmodule Nees.Shapes.Dot do
   @moduledoc """
   A Dot is just that, a lil spot at a point
   """
-  defstruct [:point]
-  alias Nees.Shapes.Dot
+  defstruct point: {0, 0}
+
+  @type t() :: %__MODULE__{
+          point: Nees.point()
+        }
+  alias __MODULE__
 
   defimpl Nees.Shape do
     def draw(%Dot{point: point}) do

@@ -1,7 +1,5 @@
 defmodule Nees.Shapes.Label do
-  alias Nees.Point
-
-  defstruct position: %Point{x: 0, y: 0},
+  defstruct position: {0, 0},
             text: "",
             # {w, h} in mm. these are the defaults, cribbed from
             # https://www.isoplotec.co.jp/HPGL/eHPGL.htm#-SI(Absolute%20Character%20Size)
