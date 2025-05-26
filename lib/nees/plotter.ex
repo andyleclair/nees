@@ -6,6 +6,7 @@ defmodule Nees.Plotter do
 
   use GenServer
   alias Circuits.UART
+  alias Nees.{Command, Shape}
   alias Nees.HPGL
 
   @device Application.compile_env(:nees, :device, "ttyUSB0")
@@ -15,7 +16,12 @@ defmodule Nees.Plotter do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
-  def write(code) do
+  @spec write(Command.t() | Shape.t()) :: :ok
+  def write(shape) when is_struct(shape) do
+    shape |> Shape.draw() |> write()
+  end
+
+  def write(code) when is_binary(code) do
     GenServer.call(__MODULE__, {:write, code})
   end
 
@@ -26,11 +32,10 @@ defmodule Nees.Plotter do
 
     case UART.open(pid, @device, speed: @speed, active: true) do
       :ok ->
+        :ok = UART.write(pid, prepare_line(Nees.Command.initialize()))
         Logger.debug("Initializing plotter...")
 
         :ok = UART.write(pid, HPGL.initialize())
-
-        write_buffer()
 
         {:ok, %{plotter: pid, buffer: []}}
 
@@ -47,7 +52,7 @@ defmodule Nees.Plotter do
 
   @impl true
   def handle_call({:write, code}, _from, %{buffer: buf} = state) when is_binary(code) do
-    {:reply, :ok, %{state | buffer: buf ++ [code]}}
+    {:reply, :ok, %{state | buffer: buf ++ [prepare_line(code)]}}
   end
 
   @impl true
@@ -69,6 +74,14 @@ defmodule Nees.Plotter do
   def handle_info({:circuits_uart, _device, code}, state) do
     Logger.debug("Got unhandled code from plotter: #{inspect(code, binaries: :as_binary)}")
     {:noreply, state}
+  end
+
+  def prepare_line(code) do
+    if String.ends_with?(code, "\r\n") do
+      code
+    else
+      code <> "\r\n"
+    end
   end
 
   def write_buffer() do

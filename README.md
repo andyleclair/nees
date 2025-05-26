@@ -1,8 +1,11 @@
 # Nees
 
 A library for interfacing with a HP 7475a pen plotter
-
 Inspired by the great [Georg Nees](https://en.wikipedia.org/wiki/Georg_Nees)
+
+## Usage
+
+See the `sample` dir for usage examples
 
 ## Notes
 
