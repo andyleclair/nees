@@ -51,7 +51,6 @@ defmodule Nees.HPGL do
       else
         acc <> "#{x},#{y}"
       end
-
     end) <> ";\r\n"
   end
 

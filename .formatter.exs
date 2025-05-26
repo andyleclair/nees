@@ -1,5 +1,5 @@
 # Used by "mix format"
 [
   inputs: ["mix.exs", "{config,lib,test}/**/*.{ex,exs}"],
-  trailing_comma: true,
+  import_deps: [:typed_struct],
 ]

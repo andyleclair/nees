@@ -8,7 +8,7 @@ defmodule Nees.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
-      {Nees.Plotter, []}
+      # {Nees.Plotter, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

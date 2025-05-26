@@ -5,9 +5,14 @@ defmodule Nees.Shapes.Hotspot do
   Radius means total outer radius. Gap is the size between the
   inner dot and the outer ring
   """
-  defstruct [:center, :radius, :gap]
+  use Nees.Shapes.Shape
+  alias Nees.Shapes.Circle
 
-  alias Nees.Shapes.{FilledCircle, Circle, Hotspot}
+  typedstruct do
+    field :center, Nees.point(), default: {0, 0}
+    field :radius, non_neg_integer(), default: 10
+    field :gap, non_neg_integer(), default: 2
+  end
 
   defimpl Nees.Shape do
     @doc "Circles are drawn from the center"
@@ -15,7 +20,7 @@ defmodule Nees.Shapes.Hotspot do
       inner_radius = radius - gap
 
       [
-        %FilledCircle{center: center, radius: inner_radius, fill_type: "1"},
+        %Circle{center: center, radius: inner_radius, fill_style: 1},
         %Circle{center: center, radius: radius}
       ]
       |> Enum.map(&Nees.Shape.draw/1)
