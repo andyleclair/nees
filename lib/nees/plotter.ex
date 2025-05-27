@@ -37,6 +37,8 @@ defmodule Nees.Plotter do
 
         :ok = UART.write(pid, HPGL.initialize())
 
+        write_buffer()
+
         {:ok, %{plotter: pid, buffer: []}}
 
       {:error, err} ->
@@ -67,6 +69,18 @@ defmodule Nees.Plotter do
         UART.write(pid, line)
         {:noreply, %{state | buffer: rest}}
     end
+  end
+
+  @impl true
+  def handle_info({:circuits_uart, _device, <<6>>}, state) do
+    Logger.error("Plotter turned off!")
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info({:circuits_uart, _device, <<192>>}, state) do
+    Logger.debug("Plotter turned on!")
+    {:noreply, state}
   end
 
   # TODO: handle pushback message when we fill the plotter's buffer
