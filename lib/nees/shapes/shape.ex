@@ -6,6 +6,7 @@ defmodule Nees.Shapes.Shape do
   defmacro __using__(_opts) do
     quote do
       use TypedStruct
+      import Nees.HPGL
       alias __MODULE__
     end
   end

@@ -11,17 +11,15 @@ defmodule Nees.Shapes.Cross do
 
   defimpl Nees.Shape do
     def draw(%Cross{center: {x, y} = center, size: size}) do
-      [
-        "PU#{center}",
-        "PD#{x + size},#{y + size}",
-        "PU#{center}",
-        "PD#{x - size},#{y - size}",
-        "PU#{center}",
-        "PD#{x + size},#{y - size}",
-        "PU#{center}",
-        "PD#{x - size},#{y + size}"
-      ]
-      |> Enum.join(";")
+      center
+      |> pen_up()
+      |> pen_down({x + size, y + size})
+      |> pen_up(center)
+      |> pen_down({x - size, y - size})
+      |> pen_up(center)
+      |> pen_down({x + size, y - size})
+      |> pen_up(center)
+      |> pen_down({x - size, y + size})
     end
   end
 end

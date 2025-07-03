@@ -10,12 +10,7 @@ defmodule Nees.Shapes.Dot do
 
   defimpl Nees.Shape do
     def draw(%Dot{point: point}) do
-      [
-        "PU#{point}",
-        "PD",
-        "PU"
-      ]
-      |> Enum.join(";")
+      point |> pen_up() |> pen_down() |> pen_up()
     end
   end
 end

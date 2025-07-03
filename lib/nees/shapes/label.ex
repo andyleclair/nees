@@ -15,14 +15,8 @@ defmodule Nees.Shapes.Label do
   end
 
   defimpl Nees.Shape do
-    def draw(text) do
-      [
-        "PU#{text.position}",
-        "SI#{text.size[:width]},#{text.size[:height]}",
-        "LB#{text.text}#{<<3>>}",
-        "PU"
-      ]
-      |> Enum.join(";")
+    def draw(%Label{position: position, size: size, text: text}) do
+      position |> pen_up() |> text_size(size[:width], size[:height]) |> label(text) |> pen_up()
     end
   end
 end

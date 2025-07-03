@@ -18,9 +18,16 @@ defmodule Nees.Shapes.Circle do
     @doc "Circles are drawn from the center"
     def draw(%Circle{center: center, radius: radius, fill_style: fill_style}) do
       if fill_style do
-        "PU#{center};FT#{fill_style};WG#{radius},0,360;PU;"
+        center
+        |> pen_up()
+        |> fill_type(fill_style)
+        |> filled_circle(radius)
+        |> pen_up()
       else
-        "PU#{center};CI#{radius};PU;"
+        center
+        |> pen_up()
+        |> circle(radius)
+        |> pen_up()
       end
     end
   end

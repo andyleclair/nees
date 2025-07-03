@@ -24,7 +24,6 @@ defmodule Nees.Shapes.Hotspot do
         %Circle{center: center, radius: radius}
       ]
       |> Enum.map(&Nees.Shape.draw/1)
-      |> Enum.join("")
     end
   end
 end
