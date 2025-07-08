@@ -27,8 +27,9 @@ defmodule Nees.Shapes.Square do
     defp rotate({x0, y0}, x, y, rads) do
       st = sin(rads)
       ct = cos(rads)
-      x1 = (x - x0) * ct - ((y - y0) * st) + x0
-      y1 = (x - x0) * st + ((y - y0) * ct) + y0
+      x1 = (x - x0) * ct - (y - y0) * st + x0
+      y1 = (x - x0) * st + (y - y0) * ct + y0
+
       {
         Float.round(x1, 2),
         Float.round(y1, 2)

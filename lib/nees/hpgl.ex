@@ -10,7 +10,7 @@ defmodule Nees.HPGL do
   When you boot the `Nees.Plotter` process, this will happen automatically.
   """
   def initialize() do
-    "IN;\r\n"
+    "IN;SP1;\r\n"
   end
 
   @doc """

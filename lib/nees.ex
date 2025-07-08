@@ -4,6 +4,7 @@ defmodule Nees do
   """
 
   @type point :: {number(), number()}
+  @type command :: String.t() | [String.t()]
 
   defmacro __using__(_opts) do
     quote do
