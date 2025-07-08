@@ -6,10 +6,10 @@ defmodule Nees.Sample.RotatingSquares do
   use Nees
 
   def plot!() do
-    shape() |> Plotter.write()
+    shapes() |> Plotter.write()
   end
 
-  def shape() do
+  def shapes() do
     for i <- 100..2500//100 do
       for theta <- 0..90//15 do
         %Square{origin: Paper.center(), size: i, rotation: theta}

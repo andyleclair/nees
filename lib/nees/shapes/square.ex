@@ -19,7 +19,8 @@ defmodule Nees.Shapes.Square do
       p2 = rotate(origin, x - size, y + size, rot_rad)
       p3 = rotate(origin, x - size, y - size, rot_rad)
       p4 = rotate(origin, x + size, y - size, rot_rad)
-      "PU#{p1};PD#{p2},#{p3},#{p4},#{p1};PU;"
+
+      p1 |> pen_up() |> pen_down([p2, p3, p4, p1]) |> pen_up()
     end
 
     # https://danceswithcode.net/engineeringnotes/rotations_in_2d/rotations_in_2d.html
@@ -27,8 +28,9 @@ defmodule Nees.Shapes.Square do
     defp rotate({x0, y0}, x, y, rads) do
       st = sin(rads)
       ct = cos(rads)
-      x1 = (x - x0) * ct - ((y - y0) * st) + x0
-      y1 = (x - x0) * st + ((y - y0) * ct) + y0
+      x1 = (x - x0) * ct - (y - y0) * st + x0
+      y1 = (x - x0) * st + (y - y0) * ct + y0
+
       {
         Float.round(x1, 2),
         Float.round(y1, 2)

@@ -6,7 +6,7 @@ defmodule Nees.Plotter do
 
   use GenServer
   alias Circuits.UART
-  alias Nees.{Command, Shape}
+  alias Nees.Shape
   alias Nees.HPGL
 
   @device Application.compile_env(:nees, :device, "ttyUSB0")
@@ -32,10 +32,9 @@ defmodule Nees.Plotter do
 
     case UART.open(pid, @device, speed: @speed, active: true) do
       :ok ->
-        :ok = UART.write(pid, prepare_line(Nees.Command.initialize()))
         Logger.debug("Initializing plotter...")
 
-        :ok = UART.write(pid, HPGL.initialize())
+        :ok = UART.write(pid, prepare_line(HPGL.initialize()))
 
         write_buffer()
 
