@@ -13,9 +13,9 @@ defmodule Nees.HPGL do
 
   When you boot the `Nees.Plotter` process, this will happen automatically.
   """
-  @spec initialize(program()) :: program()
-  def initialize(program \\ []) do
-    program ++ ["IN;"]
+  @spec initialize() :: command()
+  def initialize() do
+    "IN;SP1;"
   end
 
   @doc """
