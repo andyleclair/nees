@@ -63,7 +63,7 @@ defmodule Nees.HPGL do
           if is_nil(acc) do
             "PD#{x},#{y}"
           else
-            acc <> "#{x},#{y}"
+            acc <> ",#{x},#{y}"
           end
         end) <> ";"
       ]

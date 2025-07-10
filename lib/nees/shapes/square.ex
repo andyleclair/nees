@@ -7,7 +7,7 @@ defmodule Nees.Shapes.Square do
   import :math, only: [sin: 1, cos: 1]
 
   typedstruct do
-    field :origin, Nees.point(), default: {0, 0}
+    field :origin, Nees.point(), default: Paper.center()
     field :size, number(), default: 10
     field :rotation, number(), default: 0
   end

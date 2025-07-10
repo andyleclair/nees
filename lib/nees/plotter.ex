@@ -13,7 +13,7 @@ defmodule Nees.Plotter do
   typedstruct do
     field :plotter, pid()
     field :buffer, Nees.program()
-    field :status, :ready | :plotting | :awaiting_error | :awaiting_status | :errored
+    field :status, :ready | :plotting | :awaiting_error | :awaiting_status | :errored | :stopped
   end
 
   @device Application.compile_env(:nees, :device, "ttyUSB0")
@@ -35,6 +35,10 @@ defmodule Nees.Plotter do
     GenServer.call(__MODULE__, :get_error)
   end
 
+  def stop() do
+    GenServer.call(__MODULE__, :stop_plotting)
+  end
+
   # TODO: allow for plotting to be started and stopped
   @impl true
   def init(opts) do
@@ -42,7 +46,7 @@ defmodule Nees.Plotter do
 
     with :ok <- UART.open(pid, @device, speed: @speed, active: true),
          _ <- Logger.debug("Initializing plotter..."),
-         :ok <- UART.write(pid, HPGL.initialize()) do
+         :ok <- UART.write(pid, prepare_line(HPGL.initialize())) do
       {:ok, %__MODULE__{plotter: pid, buffer: [], status: :ready}}
     else
       {:error, err} ->
@@ -59,9 +63,9 @@ defmodule Nees.Plotter do
 
   @impl true
   def handle_call({:write, code}, _from, %{buffer: buf} = state) when is_list(code) do
+    processed = code |> draw_all() |> List.flatten()
     # Enqueue writing to the plotter once we've appended the program to the state buffer
-    GenServer.call(__MODULE__, :flush_line)
-    {:reply, :ok, %{state | buffer: buf ++ List.flatten(code)}}
+    {:reply, :ok, %{state | buffer: buf ++ processed}, {:continue, :plot}}
   end
 
   @impl true
@@ -71,24 +75,21 @@ defmodule Nees.Plotter do
   end
 
   @impl true
-  def handle_info(:flush_line, %{buffer: buf, plotter: pid, status: :ready} = state) do
-    case buf do
-      [] ->
-        {:noreply, state}
+  def handle_call(:stop_plotting, _from, state) do
+    {:reply, :ok, %{state | status: :stopped}}
+  end
 
+  @impl true
+  def handle_continue(:plot, state) do
+    case state.buffer do
+      [] -> {:noreply, state}
       [line | rest] ->
         # prepare_line appends OS; which will make the plotter send its' status back to us.
         # as that is the final command, then we can wait until the plotter gets back to us to know that
         # its' buffer is empty and we can send another line. 
-        UART.write(pid, prepare_line(line))
+        UART.write(state.plotter, prepare_line(line))
         {:noreply, %{state | buffer: rest, status: :awaiting_status}}
     end
-  end
-
-  def handle_info(:flush_line, state) do
-    # If we aren't ready when we go to flush a line, wait a second
-    Process.send_after(self(), :flush_line, 1000)
-    {:noreply, state}
   end
 
   @impl true
@@ -103,37 +104,88 @@ defmodule Nees.Plotter do
     {:noreply, %{state | status: :ready}}
   end
 
-  def handle_info({:circuits_uart, _device, "1\r\n"}, %{status: :awaiting_status} = state) do
+  def handle_info({:circuits_uart, _device, "1\r\n"}, state) do
     Logger.debug("Plotter currently plotting")
     {:noreply, %{state | status: :plotting}}
   end
 
-  def handle_info({:circuits_uart, _device, "16\r\n"}, %{status: :awaiting_status} = state) do
+  def handle_info({:circuits_uart, _device, "16\r\n"},state) do
     Logger.debug("Plotter ready to plot!")
 
-    # if there's more to plot, plot it
-    if state.buffer != [] do
-      GenServer.call(__MODULE__, :flush_line)
-    end
-
-    {:noreply, %{state | status: :ready}}
+    maybe_keep_plotting(state)
   end
 
-  def handle_info({:circuits_uart, _device, "24\r\n"}, %{status: :awaiting_status} = state) do
+  # 17 is ready and pen down
+  def handle_info({:circuits_uart, _device, "17\r\n"},state) do
     Logger.debug("Plotter ready to plot!")
 
-    # if there's more to plot, plot it
-    if state.buffer != [] do
-      GenServer.call(__MODULE__, :flush_line)
-    end
-
-    {:noreply, %{state | status: :ready}}
+    maybe_keep_plotting(state)
   end
 
-  @impl true
+  def handle_info({:circuits_uart, _device, "24\r\n"}, state) do
+    Logger.debug("Plotter ready to plot!")
+
+    maybe_keep_plotting(state)
+  end
+
+  def handle_info({:circuits_uart, _device, "24"}, %{status: :awaiting_status} = state) do
+    Logger.debug("Plotter ready to plot!")
+
+    maybe_keep_plotting(state)
+  end
+
+  def handle_info({:circuits_uart, _device, "32\r\n"}, %{status: :awaiting_status} = state) do
+    Logger.debug("Plotter not ready, please put the arm down. Clearing buffer to be safe")
+
+      {:noreply, %{state | buffer: [], status: :ready}}
+  end
+
+  def handle_info({:circuits_uart, _device, "40\r\n"}, %{status: :awaiting_status} = state) do
+    Logger.debug("Plotter not ready, please put the arm down. Clearing buffer to be safe")
+
+    {:noreply, %{state | buffer: [], status: :ready}}
+  end
+
+  def handle_info({:circuits_uart, _device, "\r\n"}, state) do
+    maybe_keep_plotting(state)
+  end
+
   def handle_info({:circuits_uart, _device, code}, state) do
     Logger.debug("Got unhandled code from plotter: #{inspect(code)}")
-    {:noreply, state}
+    maybe_keep_plotting(state)
+  end
+
+  defp maybe_keep_plotting(state) do
+    # if there's more to plot, plot it
+    if state.buffer != [] do
+      {:noreply, %{state | status: :ready}, {:continue, :plot}}
+    else
+      {:noreply, %{state | status: :ready}}
+    end
+
+  end
+
+  def draw_all([shape | rest]) when is_struct(shape) do
+    [Shape.draw(shape) | draw_all(rest)]
+  end
+  def draw_all([code | rest]) when is_binary(code) do
+    [code | draw_all(rest)]
+  end
+
+  def draw_all([list | rest]) when is_list(list) do
+    Enum.map(list, &draw_all/1) ++ draw_all(rest)
+  end
+
+  def draw_all(shape) when is_struct(shape) do
+    Shape.draw(shape)
+  end
+
+  def draw_all(bin) when is_binary(bin) do
+    bin
+  end
+
+  def draw_all([]) do
+    []
   end
 
   defp prepare_line(code) do

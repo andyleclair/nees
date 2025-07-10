@@ -8,6 +8,7 @@ defmodule Nees.Shapes.Shape do
       use TypedStruct
       import Nees.HPGL
       alias __MODULE__
+      alias Nees.Paper
     end
   end
 end

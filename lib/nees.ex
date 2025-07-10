@@ -10,8 +10,12 @@ defmodule Nees do
     quote do
       alias Nees.Plotter
       alias Nees.Paper
-      alias Nees.Shapes.Square
+      alias Nees.Shapes.Circle
+      alias Nees.Shapes.Cross
+      alias Nees.Shapes.Dot
+      alias Nees.Shapes.Label
       alias Nees.Shapes.Line
+      alias Nees.Shapes.Square
     end
   end
 
