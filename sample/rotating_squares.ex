@@ -10,7 +10,7 @@ defmodule Nees.Sample.RotatingSquares do
   end
 
   def shapes() do
-    for i <- 100..500//100 do
+    for i <- 100..1000//100 do
       for theta <- 0..90//15 do
         %Square{origin: Paper.center(), size: i, rotation: theta}
       end
