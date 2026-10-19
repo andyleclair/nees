@@ -14,12 +14,21 @@ defmodule Nees.Paper do
   """
 
   def xmax(), do: 10_365
+  # def ymax(), do: 7962
   def ymax(), do: 7962
 
   def xmin(), do: 60
   def ymin(), do: 320
 
-  def center() do
+  def length do
+    ymax() - ymin()
+  end
+
+  def width do
+    xmax() - xmin()
+  end
+
+  def center do
     {(xmax() - xmin()) / 2, (ymax() - ymin()) / 2}
   end
 

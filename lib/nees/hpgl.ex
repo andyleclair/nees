@@ -85,14 +85,49 @@ defmodule Nees.HPGL do
     raise "Unsupported fill style: #{fill_style}. FT can only be 1-4"
   end
 
+  @doc """
+  Line Type command:
+  -1: Default line type
+  0:  Dots only at the points plotted
+  1: .       
+  2: --      
+  3: ---     
+  4: ----.   
+  5: ---- -  
+  6: --- - - 
+  """
+  def line_type(program \\ [], line_type)
+
+  def line_type(program, line_type) when line_type in -1..6 do
+    program ++ ["LT#{line_type};"]
+  end
+ 
+  def line_type(_program, line_type) do
+    raise "Unsupported fill style: #{line_type}. LT can only be -1..6"
+  end
+
+  def shaded_wedge(program \\ [], radius, start_angle, sweep_angle, chord_angle \\ 0) do
+    program ++ ["WG#{radius},#{start_angle}.#{sweep_angle},#{chord_angle};"]
+  end
+
+  def arc_relative(program \\ [], {x, y}, arc_angle, chord_angle \\ 0  ) do
+    program ++ ["AR#{x},#{y},#{arc_angle},#{chord_angle};"]
+  end
+
+  @doc """
+  Filled Circle (aka 360 shaded wedge)
+  """
   @spec filled_circle(program(), non_neg_integer()) :: program()
   def filled_circle(program \\ [], radius) do
     program ++ ["WG#{radius},0,360;"]
   end
 
+  @doc """
+  Draw a "circle", or whatever thing with given chord angle
+  """
   @spec circle(program(), non_neg_integer()) :: program()
-  def circle(program \\ [], radius) do
-    program ++ ["WG#{radius},0,360;"]
+  def circle(program \\ [], radius, chord_angle \\ 0) do
+    program ++ ["CI#{radius},#{chord_angle}"]
   end
 
   def text_size(program \\ [], width, height) do
