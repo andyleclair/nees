@@ -148,8 +148,6 @@ defmodule Nees.Plotter do
   end
 
   def handle_info({:circuits_uart, _device, "16\r\n"}, state) do
-    Logger.debug("Plotter ready to plot!")
-
     maybe_keep_plotting(state)
   end
 
@@ -183,14 +181,14 @@ defmodule Nees.Plotter do
   def handle_info({:circuits_uart, _device, "48\r\n"}, %{status: :awaiting_status} = state) do
     Logger.debug("Error detected, Reading")
 
-    UART.write(state.pid, "OE;\r\n")
+    UART.write(state.plotter, "OE;\r\n")
     {:noreply, %{state | status: :awaiting_error}}
   end
 
   def handle_info({:circuits_uart, _device, "49\r\n"}, %{status: :awaiting_status} = state) do
     Logger.debug("Error detected, Reading")
 
-    UART.write(state.pid, "OE;\r\n")
+    UART.write(state.plotter, "OE;\r\n")
     {:noreply, %{state | status: :awaiting_error}}
   end
 
@@ -208,7 +206,7 @@ defmodule Nees.Plotter do
     {:noreply, %{state | status: :stopped, plot_buffer: []}}
   end
 
-  defp maybe_keep_plotting(%{plot_buffer: []} = state) do
+  defp maybe_keep_plotting(%{plot_buffer: buf} = state) when length(buf) > 0 do
     {:noreply, %{state | status: :ready}, {:continue, :plot}}
   end
 

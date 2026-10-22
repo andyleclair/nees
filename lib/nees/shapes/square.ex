@@ -32,8 +32,8 @@ defmodule Nees.Shapes.Square do
       y1 = (x - x0) * st + (y - y0) * ct + y0
 
       {
-        Float.round(x1, 2),
-        Float.round(y1, 2)
+        trunc(x1),
+        trunc(y1)
       }
     end
   end
