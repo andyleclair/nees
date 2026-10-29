@@ -7,12 +7,14 @@ defmodule Nees.Sample.BoundingBox do
   import Paper
 
   def plot!() do
-    %Line{start: {xmin(), ymin()}, end: {xmin(), ymax()}} |> Plotter.write()
-    %Line{start: {xmin(), ymax()}, end: {xmax(), ymax()}} |> Plotter.write()
-    %Line{start: {xmax(), ymax()}, end: {xmax(), ymin()}} |> Plotter.write()
-    %Line{start: {xmax(), ymin()}, end: {xmin(), ymin()}} |> Plotter.write()
-    %Line{start: {xmax() / 2, ymin()}, end: {xmax() / 2, ymax()}} |> Plotter.write()
-    %Line{start: {xmin(), ymax() / 2}, end: {xmax() , ymax() /2 }} |> Plotter.write()
+    [
+      %Line{start: {xmin(), ymin()}, end: {xmin(), ymax()}},
+      %Line{start: {xmin(), ymax()}, end: {xmax(), ymax()}},
+      %Line{start: {xmax(), ymax()}, end: {xmax(), ymin()}},
+      %Line{start: {xmax(), ymin()}, end: {xmin(), ymin()}},
+      %Line{start: {mid_x(), ymin()}, end: {mid_x(), ymax()}},
+      %Line{start: {xmin(), mid_y()}, end: {xmax(), mid_y()}}
+    ]
+    |> Plotter.write()
   end
-  
 end

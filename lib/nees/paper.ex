@@ -18,7 +18,7 @@ defmodule Nees.Paper do
   def ymax(), do: 7962
 
   def xmin(), do: 60
-  def ymin(), do: 320
+  def ymin(), do: 340
 
   def length do
     ymax() - ymin()
@@ -28,8 +28,16 @@ defmodule Nees.Paper do
     xmax() - xmin()
   end
 
+  def mid_x do
+    trunc((xmax() - xmin()) / 2) + xmin()
+  end
+
+  def mid_y do
+    trunc((ymax() - ymin()) / 2) + ymin()
+  end
+
   def center do
-    {(xmax() - xmin()) / 2, (ymax() - ymin()) / 2}
+    {mid_x(), mid_y()}
   end
 
   @spec in_bounds?(Nees.point()) :: boolean()

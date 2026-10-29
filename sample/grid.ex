@@ -4,23 +4,21 @@ defmodule Nees.Sample.Grid do
   """
 
   use Nees
+  alias Nees.Shapes.Grid
+  alias Nees.Shapes.Square
 
   @rows 10
   @columns 10
-  @size floor(Paper.length() / 10) / 2
+  @size floor(Paper.length() / 40)
 
   def shape do
-    for row <- 1..@rows,
-        column <- 1..@columns do
-      %Square{
-        origin: {
-          (2 * row - 1) * @size + Paper.xmin(),
-          (2 * column - 1) * @size + Paper.ymin()
-        },
-        size: @size,
-        rotation: 0
-      }
-    end
+    %Grid{
+      rows: @rows,
+      columns: @columns,
+      center: Paper.center(),
+      shape: Square,
+      attrs: %{size: @size}
+    }
   end
 
   def plot! do

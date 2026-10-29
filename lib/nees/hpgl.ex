@@ -69,6 +69,26 @@ defmodule Nees.HPGL do
       ]
   end
 
+  @spec plot_relative(program(), point() | [point()]) :: program()
+  def plot_relative(program \\ [], point_or_points)
+
+  def plot_relative(program, {x, y}) do
+    program ++ ["PR#{x},#{y};"]
+  end
+
+  def plot_relative(program, points) when is_list(program) and is_list(points) do
+    program ++
+      [
+        Enum.reduce(points, nil, fn {x, y}, acc ->
+          if is_nil(acc) do
+            "PR#{x},#{y}"
+          else
+            acc <> ",#{x},#{y}"
+          end
+        end) <> ";"
+      ]
+  end
+
   @spec move(iodata(), non_neg_integer(), non_neg_integer()) :: program()
   def move(program \\ [], x, y) do
     program ++ ["PA#{x},#{y};"]
@@ -101,7 +121,7 @@ defmodule Nees.HPGL do
   def line_type(program, line_type) when line_type in -1..6 do
     program ++ ["LT#{line_type};"]
   end
- 
+
   def line_type(_program, line_type) do
     raise "Unsupported fill style: #{line_type}. LT can only be -1..6"
   end
@@ -110,7 +130,7 @@ defmodule Nees.HPGL do
     program ++ ["WG#{radius},#{start_angle}.#{sweep_angle},#{chord_angle};"]
   end
 
-  def arc_relative(program \\ [], {x, y}, arc_angle, chord_angle \\ 0  ) do
+  def arc_relative(program \\ [], {x, y}, arc_angle, chord_angle \\ 0) do
     program ++ ["AR#{x},#{y},#{arc_angle},#{chord_angle};"]
   end
 

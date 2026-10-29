@@ -7,6 +7,7 @@ defmodule Nees.MixProject do
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
+      consolidate_protocols: Mix.env() != :dev,
       deps: deps(),
       elixirc_paths: ["lib", "sample"]
     ]
@@ -25,6 +26,7 @@ defmodule Nees.MixProject do
     [
       {:circuits_uart, "~> 1.5"},
       {:typed_struct, "~> 0.3.0"},
+      {:graphmath, "~> 3.0.0"},
       {:dialyxir, "~> 1.4", only: [:dev], runtime: false}
     ]
   end
